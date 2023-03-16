@@ -29,4 +29,6 @@ int main(void)
 	
 	/* Initialize the LCD Display*/
 	LCD_Init();
+	
+	Write_Something();
 }

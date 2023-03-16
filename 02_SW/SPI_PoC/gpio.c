@@ -30,12 +30,11 @@ void GPIO_Init(void)
 	//Setting LED as an output
 	PORT->Group[GPIO_GROUP_LED].DIRSET.reg = GPIO_MAP_LED;
 	
-	PORT->Group[GPIO_GROUP_RS].DIRSET.reg = GPIO_MAP_RS;
 
 	//Setting RS GPIO as output
-	//PORT->Group[GPIO_GROUP_RS].DIRSET.reg = GPIO_MAP_RS;
+	PORT->Group[GPIO_GROUP_RS].DIRSET.reg = GPIO_MAP_RS;
 
-//SPI
+	//SPI
 	//Setting SPI Slave Select as an output 
 	PORT->Group[GPIO_GROUP_SS].DIRSET.reg = GPIO_MAP_SS;
 	//Other SPI pins are configured with the PMUX settings and controller via the SERCOM			

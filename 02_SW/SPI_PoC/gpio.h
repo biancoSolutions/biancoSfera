@@ -49,8 +49,8 @@
 #define GPIO_SS_LOW()					PORT->Group[GPIO_GROUP_SS].OUTCLR.reg = GPIO_MAP_SS;
 #define GPIO_SS_HIGH()					PORT->Group[GPIO_GROUP_SS].OUTSET.reg = GPIO_MAP_SS;
 
-#define GPIO_RS_LOW()					PORT->Group[GPIO_GROUP_RS].OUTCLR.reg = GPIO_MAP_SS;
-#define GPIO_RS_HIGH()					PORT->Group[GPIO_GROUP_RS].OUTSET.reg = GPIO_MAP_SS;
+#define GPIO_RS_LOW()					PORT->Group[GPIO_GROUP_RS].OUTCLR.reg = GPIO_MAP_RS;
+#define GPIO_RS_HIGH()					PORT->Group[GPIO_GROUP_RS].OUTSET.reg = GPIO_MAP_RS;
 
 void GPIO_Init(void);
 
