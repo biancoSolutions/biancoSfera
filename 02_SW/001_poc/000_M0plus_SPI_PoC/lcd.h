@@ -5,6 +5,7 @@
  *  Author: Jan.WEISS
  */ 
 
+// DEFINE NON-ASCII CHARACTERS
 #define LCD_ARROW_RIGHT     0x7E
 #define LCD_ARROW_LEFT      0x7F
 #define LCD_UNFILLED_SQUARE 0xDB
@@ -23,6 +24,12 @@
 #define LCD_SPACE_INVADER   0xFC
 #define LCD_BLANK_SQUARE    0xFE
 #define LCD_FILLED_SQUARE   0xFF
+
+// DEFINE LCD CONTROL CHARACTERS
+#define CLEAR_DISPLAY       0x01
+#define RETURN_HOME         0x02
+#define SHIFT_CURSOR        0x14
+#define SHIFT_DISPLAY       0x1C
 
 void LCD_Init(void);
 
