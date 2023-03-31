@@ -1,8 +1,0 @@
-C:/Users/Jan.WEISS/STM32CubeIDE/workspace_1.12.0/GPIO_IOToggle/Src/main.c:83:5:main	16	static
-C:/Users/Jan.WEISS/STM32CubeIDE/workspace_1.12.0/GPIO_IOToggle/Src/main.c:150:6:LCD_Init	24	static
-C:/Users/Jan.WEISS/STM32CubeIDE/workspace_1.12.0/GPIO_IOToggle/Src/main.c:169:6:SystemClock_Config	128	static
-C:/Users/Jan.WEISS/STM32CubeIDE/workspace_1.12.0/GPIO_IOToggle/Src/main.c:223:13:SystemPower_Config	8	static
-C:/Users/Jan.WEISS/STM32CubeIDE/workspace_1.12.0/GPIO_IOToggle/Src/main.c:247:13:MX_ICACHE_Init	8	static
-C:/Users/Jan.WEISS/STM32CubeIDE/workspace_1.12.0/GPIO_IOToggle/Src/main.c:279:13:MX_SPI1_Init	24	static
-C:/Users/Jan.WEISS/STM32CubeIDE/workspace_1.12.0/GPIO_IOToggle/Src/main.c:336:13:MX_GPIO_Init	40	static
-C:/Users/Jan.WEISS/STM32CubeIDE/workspace_1.12.0/GPIO_IOToggle/Src/main.c:375:6:Error_Handler	4	static
