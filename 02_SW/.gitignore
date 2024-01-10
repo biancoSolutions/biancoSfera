@@ -1,1 +1,7 @@
+*.launch
+
 **/build
+001_poc/000_M0plus_SPI_PoC/Debug/
+001_poc/000_M0plus_SPI_PoC/.vs/
+001_poc/001_STM32_SPI_PoC/.metadata/
+001_poc/001_STM32_SPI_PoC/.settings/
