@@ -70,7 +70,7 @@ static void SystemPower_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uint8_t RX_Data[1] = {0};
+  uint8_t RX_Data[5] = {0};
   uint8_t RX_Data_BREAK[] = "\r\n";
   /* USER CODE END 1 */
 
@@ -99,21 +99,23 @@ int main(void)
   MX_SPI1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  LCD_Init(&hspi1);
+  //LCD_Init(&hspi1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	HAL_SPI_Receive(&hspi1, RX_Data, sizeof(RX_Data), 200);
-	HAL_UART_Transmit(&huart1, RX_Data, sizeof(RX_Data), 200);
-	HAL_UART_Transmit(&huart1, RX_Data_BREAK, sizeof(RX_Data_BREAK), 200);
+	HAL_SPI_Receive(&hspi1, RX_Data, sizeof(RX_Data), 1000);
+	HAL_UART_Transmit(&huart1, RX_Data, sizeof(RX_Data), 1000);
 
 
-	//HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
+	HAL_UART_Transmit(&huart1, RX_Data_BREAK, sizeof(RX_Data_BREAK), 100);
+
+
+	HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
 	//HAL_Delay(200);
-	//HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_SET);
 	//HAL_Delay(2000);
     /* USER CODE END WHILE */
 
