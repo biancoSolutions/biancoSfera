@@ -19,7 +19,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "icache.h"
+#include "memorymap.h"
 #include "spi.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -69,6 +71,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
   uint8_t aTxBuffer[] = "jan ";
+  uint8_t RX_Data[] = "UARTJANUARTJAN";
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -94,6 +97,7 @@ int main(void)
   MX_GPIO_Init();
   MX_ICACHE_Init();
   MX_SPI1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   LCD_Init(&hspi1);
   /* USER CODE END 2 */
@@ -102,6 +106,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	HAL_UART_Transmit(&huart1, RX_Data, sizeof(RX_Data), 5000);
+
 	HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOD, LCD_RS_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOF, LCD_CS_Pin, GPIO_PIN_RESET);
@@ -154,7 +160,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV8;
   RCC_ClkInitStruct.APB3CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
