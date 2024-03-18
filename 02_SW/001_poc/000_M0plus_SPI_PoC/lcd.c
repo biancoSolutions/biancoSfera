@@ -29,26 +29,15 @@ void LCD_Init(void)
 
 void Write_Something(void)
 {
-	GPIO_RS_HIGH();
+	SPI_init();
+	TMR_Init();
+	GPIO_Init();
 
 	while (1)
 	{
-		uint8_t i= 0;
-		while (i < 80)
-		{
-			Send_Byte(0xFC);
-			i++;
-		}
-		uint8_t j= 0;
-		while (j < 80)
-		{
-			Send_Byte(0xFEu);
-			j++;
-		}
-	
+		Send_Byte(0x58);
 	}
 	
-	GPIO_RS_LOW();
 }
 
 void Demo_Mode(void)
@@ -65,7 +54,7 @@ void Demo_Mode(void)
 
 void Send_Byte(uint8_t data)
 {
-	uint32_t spiTimer = GLOBAL_TMR_SET(GLOBAL_TMR_TO_10MS);
+	uint32_t spiTimer = GLOBAL_TMR_SET(GLOBAL_TMR_TO_1000MS);
 	
 	while(GLOBAL_TMR_IS_EXPIRED(spiTimer) == 0)
 	{

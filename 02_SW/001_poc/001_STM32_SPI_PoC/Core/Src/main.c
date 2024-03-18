@@ -70,8 +70,8 @@ static void SystemPower_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uint8_t aTxBuffer[] = "jan ";
-  uint8_t RX_Data[] = "UARTJANUARTJAN";
+  uint8_t RX_Data[1] = {0};
+  uint8_t RX_Data_BREAK[] = "\r\n";
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -106,17 +106,15 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	HAL_UART_Transmit(&huart1, RX_Data, sizeof(RX_Data), 5000);
+	HAL_SPI_Receive(&hspi1, RX_Data, sizeof(RX_Data), 200);
+	HAL_UART_Transmit(&huart1, RX_Data, sizeof(RX_Data), 200);
+	HAL_UART_Transmit(&huart1, RX_Data_BREAK, sizeof(RX_Data_BREAK), 200);
 
-	HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOD, LCD_RS_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOF, LCD_CS_Pin, GPIO_PIN_RESET);
-	HAL_SPI_Transmit(&hspi1, (uint8_t *)aTxBuffer, BUFFERSIZE, 500);
-	HAL_GPIO_WritePin(GPIOF, LCD_CS_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOD, LCD_RS_Pin, GPIO_PIN_RESET);
-	HAL_Delay(200);
-	HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_SET);
-	HAL_Delay(2000);
+
+	//HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
+	//HAL_Delay(200);
+	//HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_SET);
+	//HAL_Delay(2000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
