@@ -69,6 +69,7 @@ static void SystemPower_Config(void);
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
   uint8_t RX_Data[5] = {0};
   uint8_t RX_Data_BREAK[] = "\r\n";
@@ -109,9 +110,7 @@ int main(void)
 	HAL_SPI_Receive(&hspi1, RX_Data, sizeof(RX_Data), 1000);
 	HAL_UART_Transmit(&huart1, RX_Data, sizeof(RX_Data), 1000);
 
-
 	HAL_UART_Transmit(&huart1, RX_Data_BREAK, sizeof(RX_Data_BREAK), 100);
-
 
 	HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
 	//HAL_Delay(200);
