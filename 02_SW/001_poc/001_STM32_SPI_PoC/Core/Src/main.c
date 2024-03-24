@@ -23,6 +23,8 @@
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
+#include "rfm69.h"
+#include "RFM69registers.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -101,21 +103,28 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   //LCD_Init(&hspi1);
+  RFM69_Init(RF69_868MHZ, 0xAA, 0xAA);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	HAL_SPI_Receive(&hspi1, RX_Data, sizeof(RX_Data), 1000);
-	HAL_UART_Transmit(&huart1, RX_Data, sizeof(RX_Data), 1000);
+	  HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
+	  HAL_Delay(200);
+	  HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_SET);
 
-	HAL_UART_Transmit(&huart1, RX_Data_BREAK, sizeof(RX_Data_BREAK), 100);
+	  /*
+	   * OLD Test scripts below
+	   */
 
-	HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
-	//HAL_Delay(200);
-	HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_SET);
-	//HAL_Delay(2000);
+//HAL_SPI_Receive(&hspi1, RX_Data, sizeof(RX_Data), 1000);
+//HAL_UART_Transmit(&huart1, RX_Data, sizeof(RX_Data), 1000);
+//HAL_UART_Transmit(&huart1, RX_Data_BREAK, sizeof(RX_Data_BREAK), 100);
+//HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
+//HAL_Delay(200);
+//HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_SET);
+//HAL_Delay(2000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

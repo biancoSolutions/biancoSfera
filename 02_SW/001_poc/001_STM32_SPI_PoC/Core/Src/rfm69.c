@@ -5,13 +5,31 @@
  *      Author: Kreuter
  */
 
-#import "spi.h"
-#import "RFM69registers.h"
-#import "gpio.h"
+#include "spi.h"
+#include "RFM69registers.h"
+#include "gpio.h"
 
+//Function prototypes
+uint8_t readREG(SPI_HandleTypeDef * spi_handler, uint8_t addr);
+void writeREG(SPI_HandleTypeDef * spi_handler, uint8_t addr, uint8_t value);
+int chipPresent(SPI_HandleTypeDef * spi_handler);
 
+/*
+ * Function:  RFM69_Init
+ * --------------------
+ * Initializes the RFM69 Chip.
+ *
+ *
+ *  freqBand: TODO
+ *
+ *  nodeID: Sets the nodeID
+ *
+ *  networkID: Sets the networkID
+ *
+ */
 void RFM69_Init(uint8_t freqBand, uint8_t nodeID, uint8_t networkID){
 	HAL_Delay(100);
+	int test = chipPresent(&hspi1);
 }
 
 
@@ -26,7 +44,6 @@ void RFM69_Init(uint8_t freqBand, uint8_t nodeID, uint8_t networkID){
  *
  *  returns: 	1 if no Chip is found
  *  			0 if a RFM69 Chip is found
-
  */
 int chipPresent(SPI_HandleTypeDef * spi_handler){
 	writeREG(spi_handler, REG_SYNCVALUE1, 0xAA);
@@ -62,11 +79,11 @@ int chipPresent(SPI_HandleTypeDef * spi_handler){
  *
  *  value: [HEX] The Value
  */
-void writeREG(SPI_HandleTypeDef * spi_handler, uint8_t addr, unit8_t value){
+void writeREG(SPI_HandleTypeDef * spi_handler, uint8_t addr, uint8_t value){
 	HAL_Delay(100);
 	// & 0x80 to set the 7th Bit to 1 (write)
-	HAL_SPI_Transmit(&hspi1, addr & 0x80, 1, 100);
-	HAL_SPI_Transmit(spi_handler, value, 1, 100);
+	HAL_SPI_Transmit(&hspi1, &addr, 1, 100);
+	HAL_SPI_Transmit(spi_handler, &value, 1, 100);
 }
 
 /*
@@ -85,6 +102,6 @@ uint8_t readREG(SPI_HandleTypeDef * spi_handler, uint8_t addr){
 	HAL_Delay(100);
 	uint8_t value;
 	// & 0x7F to set the 7th Bit to 0 (read)
-	HAL_SPI_TransmitReceive(spi_handler, addr & 0x7F, value, 1, 100);
+	HAL_SPI_TransmitReceive(spi_handler, &addr, &value, 1, 100);
 	return value;
 }
