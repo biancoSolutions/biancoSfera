@@ -5,14 +5,12 @@
  *      Author: Kreuter
  */
 
-#include "spi.h"
-#include "RFM69registers.h"
-#include "gpio.h"
+#include "rfm69.h"
 
-//Function prototypes
-uint8_t readREG(SPI_HandleTypeDef * spi_handler, uint8_t addr);
-void writeREG(SPI_HandleTypeDef * spi_handler, uint8_t addr, uint8_t value);
-int chipPresent(SPI_HandleTypeDef * spi_handler);
+#include "rfm69_registers.h"
+#include "gpio.h"
+#include "spi.h"
+
 
 /*
  * Function:  RFM69_Init
@@ -45,25 +43,32 @@ void RFM69_Init(uint8_t freqBand, uint8_t nodeID, uint8_t networkID){
  *  returns: 	1 if no Chip is found
  *  			0 if a RFM69 Chip is found
  */
-int chipPresent(SPI_HandleTypeDef * spi_handler){
+uint8_t chipPresent(SPI_HandleTypeDef * spi_handler){
+	uint8_t return_status = 1;
+
 	writeREG(spi_handler, REG_SYNCVALUE1, 0xAA);
 	HAL_Delay(100);
+
 	if (readREG(spi_handler, REG_SYNCVALUE1) == 0xAA){
 		writeREG(spi_handler, REG_SYNCVALUE1, 0x55);
 		HAL_Delay(100);
+
 		if (readREG(spi_handler, REG_SYNCVALUE1) == 0x55){
 			HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
-			return 0;
-		}
+			return_status = 0;
 
+			return return_status;
+		}
 		else{
 			HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
-			return 1;
+
+			return return_status;
 		}
 	}
 	else{
 		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
-		return 1;
+
+		return return_status;
 	}
 }
 
@@ -98,10 +103,11 @@ void writeREG(SPI_HandleTypeDef * spi_handler, uint8_t addr, uint8_t value){
  *
  *  returns: The value of the register addr.
  */
-uint8_t readREG(SPI_HandleTypeDef * spi_handler, uint8_t addr){
+HAL_StatusTypeDef readREG(SPI_HandleTypeDef * spi_handler, uint8_t addr){
 	HAL_Delay(100);
-	uint8_t value;
+	HAL_StatusTypeDef value;
 	// & 0x7F to set the 7th Bit to 0 (read)
 	HAL_SPI_TransmitReceive(spi_handler, &addr, &value, 1, 100);
+
 	return value;
 }

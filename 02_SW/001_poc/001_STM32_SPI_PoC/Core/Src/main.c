@@ -18,16 +18,17 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 #include "icache.h"
 #include "memorymap.h"
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
-#include "rfm69.h"
-#include "RFM69registers.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "rfm69.h"
+#include "rfm69_registers.h"
 #include "lcd.h"
 /* USER CODE END Includes */
 
