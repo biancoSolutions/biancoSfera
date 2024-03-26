@@ -85,10 +85,17 @@ uint8_t chipPresent(SPI_HandleTypeDef * spi_handler){
  *  value: [HEX] The Value
  */
 void writeREG(SPI_HandleTypeDef * spi_handler, uint8_t addr, uint8_t value){
+	uint8_t write_addr = addr | 0x80;
+
 	HAL_Delay(100);
+
+	HAL_GPIO_WritePin(GPIOF, LCD_CS_Pin, GPIO_PIN_RESET);
+
 	// & 0x80 to set the 7th Bit to 1 (write)
-	HAL_SPI_Transmit(&hspi1, &addr, 1, 100);
+	HAL_SPI_Transmit(spi_handler, &write_addr, 1, 100);
 	HAL_SPI_Transmit(spi_handler, &value, 1, 100);
+
+	HAL_GPIO_WritePin(GPIOF, LCD_CS_Pin, GPIO_PIN_SET);
 }
 
 /*
@@ -103,11 +110,19 @@ void writeREG(SPI_HandleTypeDef * spi_handler, uint8_t addr, uint8_t value){
  *
  *  returns: The value of the register addr.
  */
-HAL_StatusTypeDef readREG(SPI_HandleTypeDef * spi_handler, uint8_t addr){
+uint8_t readREG(SPI_HandleTypeDef * spi_handler, uint8_t addr){
+	uint8_t read_addr = addr & 0x7F;
+	uint8_t value;
+
 	HAL_Delay(100);
-	HAL_StatusTypeDef value;
+
+	HAL_GPIO_WritePin(GPIOF, LCD_CS_Pin, GPIO_PIN_RESET);
+
 	// & 0x7F to set the 7th Bit to 0 (read)
-	HAL_SPI_TransmitReceive(spi_handler, &addr, &value, 1, 100);
+	HAL_SPI_Transmit(spi_handler, &read_addr, 1, 100);
+	HAL_SPI_Receive(spi_handler, &value, 1, 100);
+
+	HAL_GPIO_WritePin(GPIOF, LCD_CS_Pin, GPIO_PIN_SET);
 
 	return value;
 }
