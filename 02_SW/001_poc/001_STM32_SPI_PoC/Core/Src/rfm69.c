@@ -17,18 +17,59 @@
  * --------------------
  * Initializes the RFM69 Chip.
  *
- *
- *  freqBand: TODO
- *
  *  nodeID: Sets the nodeID
  *
  *  networkID: Sets the networkID
  *
  */
-void RFM69_Init(uint8_t freqBand, uint8_t nodeID, uint8_t networkID){
+void RFM69_Init(uint8_t nodeID, uint8_t networkID){
 	HAL_Delay(100);
 	int test = chipPresent(&hspi1);
+
+	const uint8_t CONFIG[][2] = {
+			// Operating Mode -> Mode forced by user | Listen off -> required in standby | standby transceiver mode
+			/* 0x01 */ { REG_OPMODE, RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },
+			// Data Mode -> packet mode | FSK modulation | no data shaping
+			/* 0x02 */ { REG_DATAMODUL, RF_DATAMODUL_DATAMODE_PACKET | RF_DATAMODUL_MODULATIONTYPE_FSK | RF_DATAMODUL_MODULATIONSHAPING_00 },
+			// Bit Rate -> default is 4.8 kb/s
+			/* 0x03 */ { REG_BITRATEMSB, RF_BITRATEMSB_4800 },
+			/* 0x04 */ { REG_BITRATELSB, RF_BITRATELSB_4800 },
+			// Frequency deviation -> default is 5 kHz
+			/* 0x05 */ { REG_FDEVMSB, RF_FDEVMSB_50000 },
+			/* 0x06 */ { REG_FDEVLSB, RF_FDEVLSB_50000 },
+			// RF carrier frequency -> fixed to 868 MHz, everything else is not legal in Europe
+			/* 0x07 */ { REG_FRFMSB, RF_FRFMSB_868 },
+			/* 0x08 */ { REG_FRFMID, RF_FRFMID_868 },
+			/* 0x09 */ { REG_FRFLSB, RF_FRFLSB_868 },
+			// Enables the overload current protection for the power amplifier -> default is 95 mA
+			/* 0x13 */ { REG_OCP, RF_OCP_ON | RF_OCP_TRIM_95 },
+			// Cut-off frequency of the DC offset canceler (DCC) -> default is 4% | channel filter bandwidth control -> default is 24 (see data sheet)
+			/* 0x19 */ { REG_RXBW, RF_RXBW_DCCFREQ_010 | RF_RXBW_MANT_24 | RF_RXBW_EXP_5 },
+			// Activate DIO0 -> see table 21 in data sheet for reference
+			/* 0x25 */ { REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_01 },
+			// CLKOUT is turned off for power saving
+			/* 0x26 */ { REG_DIOMAPPING2, RF_DIOMAPPING2_CLKOUT_OFF },
+			// Set when FIFO overrun occurs. Flags and FIFO are cleared when bit is set (FIFO reset ?)
+			/* 0x28 */ { REG_IRQFLAGS2, RF_IRQFLAGS2_FIFOOVERRUN },
+			// RSSI trigger level for RSSI interrupt -> threshold / 2 dbM -> default is 0xE4 == 228
+			/* 0x29 */ { REG_RSSITHRESH, 0XE4 },
+			// Enables sync word generation & detection | sync address interrupt occurs | number of tolerated bit errors
+			/* 0x2E */ { REG_SYNCCONFIG, RF_SYNC_ON | RF_SYNC_FIFOFILL_AUTO | RF_SYNC_SIZE_2 | RF_SYNC_TOL_0 },
+			// TODO: check sync word byte of available / wanted networks
+			/* 0x2F */ { REG_SYNCVALUE1, 0x2D },
+			/* 0x30 */ { REG_SYNCVALUE2, networkID },
+			// variable package length | DC free encoding is off | for starting CRC is turned off | for starting no address filtering is activated
+			/* 0x37 */ { REG_PACKETCONFIG1, RF_PACKET1_FORMAT_VARIABLE | RF_PACKET1_DCFREE_OFF | RF_PACKET1_CRC_OFF | RF_PACKET1_ADRSFILTERING_OFF },
+			// maximum payload length for RX (not used for TX) - only used in variable package format (0x37)
+			/* 0x38 */ { REG_PAYLOADLENGTH, 0x55 },
+			// Start transmission if at least on byte in FIFO | FIFO level interrupt trigger -> 0xF is default
+			/* 0x3C */ { REG_FIFOTHRESH, RF_FIFOTHRESH_TXSTART_FIFONOTEMPTY | RF_FIFOTHRESH_VALUE },
+			// Defines the delay between FIFO empty and start of new RSSI | No RX restart. -> RestartRX can be used | AES encryption turned off
+			/* 0x3D */ { REG_PACKETCONFIG2, RF_PACKET2_RXRESTARTDELAY_2BITS | RF_PACKET2_AUTORXRESTART_OFF | RF_PACKET2_AES_OFF },
+			{255, 0}
+	};
 }
+
 
 
 /*
@@ -72,6 +113,7 @@ uint8_t chipPresent(SPI_HandleTypeDef * spi_handler){
 	}
 }
 
+
 /*
  * Function:  writeREG
  * --------------------
@@ -97,6 +139,7 @@ void writeREG(SPI_HandleTypeDef * spi_handler, uint8_t addr, uint8_t value){
 
 	HAL_GPIO_WritePin(GPIOF, LCD_CS_Pin, GPIO_PIN_SET);
 }
+
 
 /*
  * Function:  readREG

@@ -60,8 +60,8 @@ all: main-build
 main-build: STM32_SPI.elf secondary-outputs
 
 # Tool invocations
-STM32_SPI.elf STM32_SPI.map: $(OBJS) $(USER_OBJS) C:\Users\jan.weiss\CUSTOMERS\INTERN\bso\biancoSfera\02_SW\001_poc\001_STM32_SPI_PoC\STM32U5A5ZJTXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "STM32_SPI.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"C:\Users\jan.weiss\CUSTOMERS\INTERN\bso\biancoSfera\02_SW\001_poc\001_STM32_SPI_PoC\STM32U5A5ZJTXQ_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32_SPI.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+STM32_SPI.elf STM32_SPI.map: $(OBJS) $(USER_OBJS) /Users/jan/DEV/biancoSfera/02_SW/001_poc/001_STM32_SPI_PoC/STM32U5A5ZJTXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "STM32_SPI.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"/Users/jan/DEV/biancoSfera/02_SW/001_poc/001_STM32_SPI_PoC/STM32U5A5ZJTXQ_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32_SPI.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

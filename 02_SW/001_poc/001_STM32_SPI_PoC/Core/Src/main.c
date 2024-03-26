@@ -104,7 +104,7 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   //LCD_Init(&hspi1);
-  RFM69_Init(RF69_868MHZ, 0xAA, 0xAA);
+  RFM69_Init(0xAA, 0xAA);
   /* USER CODE END 2 */
 
   /* Infinite loop */
