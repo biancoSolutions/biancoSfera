@@ -11,7 +11,7 @@
 #include "gpio.h"
 #include "spi.h"
 
-
+#define CONFIG_LAST_ELEMENT 255
 /*
  * Function:  RFM69_Init
  * --------------------
@@ -23,9 +23,6 @@
  *
  */
 void RFM69_Init(uint8_t nodeID, uint8_t networkID){
-	HAL_Delay(100);
-	int test = chipPresent(&hspi1);
-
 	const uint8_t CONFIG[][2] = {
 			// Operating Mode -> Mode forced by user | Listen off -> required in standby | standby transceiver mode
 			/* 0x01 */ { REG_OPMODE, RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },
@@ -66,8 +63,23 @@ void RFM69_Init(uint8_t nodeID, uint8_t networkID){
 			/* 0x3C */ { REG_FIFOTHRESH, RF_FIFOTHRESH_TXSTART_FIFONOTEMPTY | RF_FIFOTHRESH_VALUE },
 			// Defines the delay between FIFO empty and start of new RSSI | No RX restart. -> RestartRX can be used | AES encryption turned off
 			/* 0x3D */ { REG_PACKETCONFIG2, RF_PACKET2_RXRESTARTDELAY_2BITS | RF_PACKET2_AUTORXRESTART_OFF | RF_PACKET2_AES_OFF },
-			{255, 0}
+			/* 0xFF */ { CONFIG_LAST_ELEMENT, 0 }
 	};
+
+	HAL_Delay(100);
+	uint8_t chip_select_status = chipPresent(&hspi1);
+
+	// Wait for RFM69 module to come up, otherwise perform system reset
+	if (chip_select_status == 0u) {
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
+	}
+	else {
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
+		HAL_Delay(100);
+		NVIC_SystemReset();
+	}
+
 }
 
 
@@ -95,19 +107,16 @@ uint8_t chipPresent(SPI_HandleTypeDef * spi_handler){
 		HAL_Delay(100);
 
 		if (readREG(spi_handler, REG_SYNCVALUE1) == 0x55){
-			HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
 			return_status = 0;
 
 			return return_status;
 		}
 		else{
-			HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
 
 			return return_status;
 		}
 	}
 	else{
-		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
 
 		return return_status;
 	}
