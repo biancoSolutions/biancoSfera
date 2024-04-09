@@ -1,0 +1,11 @@
+# Eclipse
+.metadata
+.settings
+[Rr]elease
+[Dd]ebug
+.launch
+*.o
+02_SW/001_poc/001_STM32_SPI_PoC/Debug/
+
+# Altium
+History/
