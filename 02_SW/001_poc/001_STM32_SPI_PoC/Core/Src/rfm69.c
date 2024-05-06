@@ -83,6 +83,33 @@ void RFM69_Init(uint8_t nodeID, uint8_t networkID){
 }
 
 
+uint8_t setToReceiverMode(){
+	  uint8_t reg_value = 0xFF ;
+
+
+	  writeREG(&hspi1, REG_OPMODE, RF_OPMODE_RECEIVER);
+
+	  uint8_t await_time = 0;
+
+	  while(readREG(&hspi1, REG_OPMODE) != RF_OPMODE_RECEIVER){
+		  await_time++;
+	  }
+
+	  reg_value = readREG(&hspi1, REG_OPMODE);
+	  return reg_value;
+}
+
+
+uint8_t listen(){
+	uint8_t irq_flag_register_value = UINT8_MAX;
+
+	do{
+		irq_flag_register_value = readREG(&hspi1, REG_IRQFLAGS2);
+	} while(irq_flag_register_value == 0);
+
+	return irq_flag_register_value;
+}
+
 
 /*
  * Function:  chipPresent
