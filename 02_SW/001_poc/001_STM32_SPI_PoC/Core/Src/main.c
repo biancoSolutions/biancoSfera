@@ -76,6 +76,7 @@ int main(void)
   /* USER CODE BEGIN 1 */
   uint8_t RX_Data[5] = {0};
   uint8_t RX_Data_BREAK[] = "\r\n";
+  char listen_value[19];
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -105,20 +106,45 @@ int main(void)
   /* USER CODE BEGIN 2 */
   //LCD_Init(&hspi1);
   RFM69_Init(0xAA, 0xAA);
+  setToReceiverMode();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_SET);
-	  HAL_Delay(200);
+	  uint8_t irq_flag_register_value = UINT8_MAX;
+	  uint8_t rxContent = UINT8_MAX;
+	  uint8_t activeIrq = UINT8_MAX;
+
 	  HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
-	  HAL_Delay(200);
 
-	  setToReceiverMode();
+	  activeIrq = listen();
 
-	  listen();
+	  sprintf(listen_value, "Achtive IRQ %d\r\n", activeIrq);
+	  HAL_UART_Transmit(&huart1, &listen_value, sizeof(listen_value), 10);
+
+	  HAL_Delay(50);
+
+	  //0x44 → fifo is not empty and payload ready
+	  while(activeIrq >= 0x44) {
+		  HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_SET);
+
+		  rxContent = getFifoContent();
+
+		  sprintf(listen_value, "WAS IN FIFO: %X\r\n", rxContent);
+		  HAL_UART_Transmit(&huart1, &listen_value, sizeof(listen_value), 10);
+
+		  // break out of FIFO read out if no data in fifo
+		  irq_flag_register_value = readREG(&hspi1, REG_IRQFLAGS2);
+		  if (irq_flag_register_value == 0x00) {
+			  break;
+		  }
+
+	  }
+
+
 
 
     /* USER CODE END WHILE */

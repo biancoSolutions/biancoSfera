@@ -80,6 +80,10 @@ void RFM69_Init(uint8_t nodeID, uint8_t networkID){
 		NVIC_SystemReset();
 	}
 
+	for (uint8_t i = 0; CONFIG[i][0] != 255; i++) {
+		writeREG(&hspi1, CONFIG[i][0], CONFIG[i][1]);
+	}
+
 }
 
 
@@ -204,4 +208,13 @@ uint8_t readREG(SPI_HandleTypeDef * spi_handler, uint8_t addr){
 	HAL_GPIO_WritePin(GPIOF, LCD_CS_Pin, GPIO_PIN_SET);
 
 	return value;
+}
+
+
+uint8_t getFifoContent() {
+	uint8_t rxContent;
+
+	rxContent = readREG(&hspi1, REG_FIFO);
+
+	return rxContent;
 }
