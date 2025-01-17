@@ -28,7 +28,7 @@
 
 #define SPI_SERCOM_CLK_GEN			0
 #define SPI_SERCOM					SERCOM5
-#define SPI_CLK_FREQ				8000000
+#define SPI_CLK_FREQ				6000000
 #define SPI_BAUD					50000			
 
 void SPI_init(void);

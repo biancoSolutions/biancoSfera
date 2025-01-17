@@ -28,7 +28,7 @@ int main(void)
     SystemInit();
 	
 	/* Initialize the LCD Display*/
-	LCD_Init();
+	//LCD_Init();
 	
 	Write_Something();
 }
