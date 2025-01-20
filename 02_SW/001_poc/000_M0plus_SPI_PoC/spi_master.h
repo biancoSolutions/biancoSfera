@@ -32,4 +32,4 @@
 #define SPI_BAUD					50000			
 
 void SPI_init(void);
-uint8_t spiSend(uint8_t data);
+uint32_t spiSend(uint8_t data);

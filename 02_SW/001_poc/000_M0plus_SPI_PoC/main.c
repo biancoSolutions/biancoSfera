@@ -20,15 +20,20 @@
  */ 
 
 #include "sam.h"
-#include "lcd.h"
+//#include "lcd.h"
+#include "gpio.h"
+#include "spi_master.h"
+#include "rfm69.h"
+#include "tmr.h"
 
 int main(void)
 {
 	/* Initialize the SAM system */
     SystemInit();
+	SPI_init();
+	TMR_Init();
+	GPIO_Init();
 	
-	/* Initialize the LCD Display*/
-	//LCD_Init();
+	RFM69_Init(0xAA, 0xAA);
 	
-	Write_Something();
 }

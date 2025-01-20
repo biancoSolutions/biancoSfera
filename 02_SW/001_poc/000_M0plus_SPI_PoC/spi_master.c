@@ -110,10 +110,13 @@ void SPI_init(void)
 	
 }
 
-uint8_t spiSend(uint8_t data)
+uint32_t spiSend(uint8_t data)
 {	
+	uint8_t return_value = UINT8_MAX;
+	
 	while(SPI_SERCOM->SPI.INTFLAG.bit.DRE == 0);
 	SPI_SERCOM->SPI.DATA.reg = data;
 	while(SPI_SERCOM->SPI.INTFLAG.bit.RXC == 0);
-	return (uint8_t)SPI_SERCOM->SPI.DATA.reg;	
+	return_value = (uint32_t)SPI_SERCOM->SPI.DATA.reg;
+	return return_value;
 }
