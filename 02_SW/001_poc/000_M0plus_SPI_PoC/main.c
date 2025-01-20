@@ -20,20 +20,29 @@
  */ 
 
 #include "sam.h"
-//#include "lcd.h"
 #include "gpio.h"
 #include "spi_master.h"
 #include "rfm69.h"
+#include "rfm69_registers.h"
 #include "tmr.h"
 
 int main(void)
 {
-	/* Initialize the SAM system */
+	/* Initialize the system */
     SystemInit();
-	SPI_init();
+	SPI_Init();
 	TMR_Init();
 	GPIO_Init();
-	
 	RFM69_Init(0xAA, 0xAA);
+	
+	// Listen for LoRa Messages
+	RFM69_Receiver_Mode();
+	
+	
+	while (1)
+	{
+		RFM69_Listen();
+	}
+	
 	
 }

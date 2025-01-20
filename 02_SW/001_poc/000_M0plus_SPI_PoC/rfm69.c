@@ -5,14 +5,13 @@
  *  Author: Jan Weiﬂ
  */ 
 
+#include <string.h>
 
 #include "tmr.h"
 #include "rfm69.h"
 #include "rfm69_registers.h"
 #include "gpio.h"
 #include "spi_master.h"
-
-#include <stdint.h>
 
 #define CONFIG_LAST_ELEMENT 255
 
@@ -91,7 +90,7 @@ void RFM69_Init(uint8_t nodeID, uint8_t networkID){
 
 }
 
-uint8_t setToReceiverMode(){
+uint8_t RFM69_Receiver_Mode(){
 	  uint8_t reg_value = 0xFF ;
 
 
@@ -107,15 +106,43 @@ uint8_t setToReceiverMode(){
 	  return reg_value;
 }
 
-
-uint8_t listen(){
+/*
+ * Function:  RFM69_Listen
+ * --------------------
+ * Waits until a package is received and reads the package
+ *
+ *  returns: 	First byte received (length of payload)
+ */
+uint8_t RFM69_Listen(){
 	uint8_t irq_flag_register_value = UINT8_MAX;
+	uint8_t package_size = UINT8_MAX;
 
-	do{
+	// wait until FIFO is not empty & payload is ready
+	do
+	{
 		irq_flag_register_value = readREG(REG_IRQFLAGS2);
-	} while(irq_flag_register_value == 0);
+	} while(irq_flag_register_value < ACTIVE_IRQ);
 
-	return irq_flag_register_value;
+	// create array based on package length byte (first byte of package)
+	package_size = readREG(REG_FIFO);
+	uint8_t rx_content[package_size];
+	uint8_t rx_content_iterator = 0;
+	
+	// fill rest of RX content with the remaining FIFO bytes
+	while(irq_flag_register_value >= ACTIVE_IRQ)
+	{
+		uint8_t byte_content = readREG(REG_FIFO);
+		memcpy(&rx_content[rx_content_iterator], &byte_content, 1);
+		 		
+		rx_content_iterator++;
+		
+		// at this point the FIFO's payload should not be ready anymore
+		if (irq_flag_register_value < ACTIVE_IRQ) {
+			break;
+		}
+	}
+	
+	return rx_content[0];
 }
 
 
@@ -125,8 +152,6 @@ uint8_t listen(){
  * Checks if the RFM69 Chip is present on the chosen SPI Interface.
  * Sets the green LED when the chip is present.
  * Sets the red LED when the chip is not present.
- *
- *  spi_handler: Pointer to the chosen SPI Interface
  *
  *  returns: 	1 if no Chip is found
  *  			0 if a RFM69 Chip is found
@@ -181,8 +206,8 @@ void writeREG(uint8_t addr, uint8_t value){
 	GPIO_SS_LOW();
 	
 	// & 0x80 to set the 7th Bit to 1 (write)
-	spiSend(write_addr);
-	spiSend(value);
+	SPI_Send(write_addr);
+	SPI_Send(value);
 
 	GPIO_SS_HIGH();
 }
@@ -208,18 +233,9 @@ uint8_t readREG(uint8_t addr){
 
 	// Pull Chip Select low for communication start
 	GPIO_SS_LOW();
-	read_value = spiSend(read_addr);
-	read_value = spiSend(0xFF);
+	read_value = SPI_Send(read_addr);
+	read_value = SPI_Send(0xFF);
 	GPIO_SS_HIGH();
 
 	return read_value;
-}
-
-
-uint8_t getFifoContent() {
-	uint8_t rxContent;
-
-	rxContent = readREG(REG_FIFO);
-
-	return rxContent;
 }
