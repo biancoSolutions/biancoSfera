@@ -13,7 +13,7 @@
 void RFM69_Init(uint8_t nodeID, uint8_t networkID);
 
 uint8_t RFM69_Receiver_Mode();
-uint8_t RFM69_Listen();
+void  RFM69_Listen(uint8_t* rx_content, uint8_t* const rx_content_size);
 
 uint8_t chipPresent();
 void writeREG(uint8_t addr, uint8_t value);

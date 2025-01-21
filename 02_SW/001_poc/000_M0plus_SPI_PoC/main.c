@@ -41,7 +41,10 @@ int main(void)
 	
 	while (1)
 	{
-		RFM69_Listen();
+		uint8_t listen_content[UINT8_MAX];
+		uint8_t listen_content_size;
+		
+		RFM69_Listen(listen_content, &listen_content_size);
 	}
 	
 	

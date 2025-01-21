@@ -120,10 +120,10 @@ uint8_t RFM69_Receiver_Mode(){
  *
  *  returns: 	First byte received (length of payload)
  */
-uint8_t RFM69_Listen(){
+void RFM69_Listen(uint8_t* rx_content, uint8_t* const rx_content_size)
+{
 	uint8_t irq_flag_register_value = UINT8_MAX;
-	uint8_t package_size = UINT8_MAX;
-
+	
 	// wait until FIFO is not empty & payload is ready
 	do
 	{
@@ -131,19 +131,20 @@ uint8_t RFM69_Listen(){
 	} while(irq_flag_register_value < ACTIVE_IRQ);
 
 	// create array based on package length byte (first byte of package)
-	package_size = readREG(REG_FIFO);
-	uint8_t rx_content[package_size];
+	*rx_content_size = readREG(REG_FIFO);
+	
 	uint8_t rx_content_iterator = 0;
 	
 	// fill rest of RX content with the remaining FIFO bytes
 	while(irq_flag_register_value >= ACTIVE_IRQ)
 	{
+		/*
 		// timer is important - otherwise bytes will be lost
 		uint32_t read_fifo_timer = GLOBAL_TMR_SET(GLOBAL_TMR_TO_10MS);
 		while(GLOBAL_TMR_IS_EXPIRED(read_fifo_timer) == 0)
 		{
 		
-		}
+		}*/
 	
 		uint8_t byte_content = readREG(REG_FIFO);
 		rx_content[rx_content_iterator] = byte_content;
@@ -156,8 +157,6 @@ uint8_t RFM69_Listen(){
 			break;
 		}
 	}
-	
-	return rx_content[0];
 }
 
 
