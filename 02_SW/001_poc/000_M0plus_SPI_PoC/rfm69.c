@@ -131,13 +131,14 @@ uint8_t RFM69_Listen(){
 	// fill rest of RX content with the remaining FIFO bytes
 	while(irq_flag_register_value >= ACTIVE_IRQ)
 	{
+		
 		uint8_t byte_content = readREG(REG_FIFO);
-		memcpy(&rx_content[rx_content_iterator], &byte_content, 1);
+		memcpy(&rx_content[rx_content_iterator], &byte_content, strlen(&byte_content));
 		 		
 		rx_content_iterator++;
 		
 		// at this point the FIFO's payload should not be ready anymore
-		if (irq_flag_register_value < ACTIVE_IRQ) {
+		if (irq_flag_register_value < ACTIVE_IRQ || rx_content_iterator >= package_size) {
 			break;
 		}
 	}
@@ -161,8 +162,8 @@ uint8_t chipPresent(){
 
 	writeREG(REG_SYNCVALUE1, 0xAA);
 	
-	uint32_t spiTimer = GLOBAL_TMR_SET(GLOBAL_TMR_TO_100MS);
-	while(GLOBAL_TMR_IS_EXPIRED(spiTimer) == 0)
+	uint32_t chip_present_timer = GLOBAL_TMR_SET(GLOBAL_TMR_TO_100MS);
+	while(GLOBAL_TMR_IS_EXPIRED(chip_present_timer ) == 0)
 	{
 		
 	}
@@ -193,9 +194,6 @@ uint8_t chipPresent(){
  * --------------------
  * Writes a Message to the RFM69 Chip over the chosen Interface.
  *
- *
- *  spi_handler: [PTR] Pointer to the chosen SPI Interface
- *
  *  addr: [HEX] The Address to write to (See RFM69registers.h for predefined values)
  *
  *  value: [HEX] The Value
@@ -217,9 +215,6 @@ void writeREG(uint8_t addr, uint8_t value){
  * Function:  readREG
  * --------------------
  * Writes a Message to the RFM69 Chip over the chosen Interface.
- *
- *
- *  spi_handler: [PTR] Pointer to the chosen SPI Interface
  *
  *  addr: [HEX] The Address to write to (See RFM69registers.h for predefined values)
  *
