@@ -90,6 +90,13 @@ void RFM69_Init(uint8_t nodeID, uint8_t networkID){
 
 }
 
+/*
+ * Function:  RFM69_Receiver_Mode
+ * --------------------
+ * Sets the RFM69 module into receiver mode by setting bit 4 of register 0x1
+ *
+ *  returns: 	Register 0x1 (RegOpMode) status
+ */
 uint8_t RFM69_Receiver_Mode(){
 	  uint8_t reg_value = 0xFF ;
 
@@ -131,14 +138,21 @@ uint8_t RFM69_Listen(){
 	// fill rest of RX content with the remaining FIFO bytes
 	while(irq_flag_register_value >= ACTIVE_IRQ)
 	{
+		// timer is important - otherwise bytes will be lost
+		uint32_t read_fifo_timer = GLOBAL_TMR_SET(GLOBAL_TMR_TO_10MS);
+		while(GLOBAL_TMR_IS_EXPIRED(read_fifo_timer) == 0)
+		{
 		
+		}
+	
 		uint8_t byte_content = readREG(REG_FIFO);
-		memcpy(&rx_content[rx_content_iterator], &byte_content, strlen(&byte_content));
+		rx_content[rx_content_iterator] = byte_content;
 		 		
 		rx_content_iterator++;
 		
+		irq_flag_register_value = readREG(REG_IRQFLAGS2);
 		// at this point the FIFO's payload should not be ready anymore
-		if (irq_flag_register_value < ACTIVE_IRQ || rx_content_iterator >= package_size) {
+		if (irq_flag_register_value < ACTIVE_IRQ) {
 			break;
 		}
 	}
