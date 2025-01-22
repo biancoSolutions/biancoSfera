@@ -23,6 +23,7 @@
 #ifndef TMR_H_
 #define TMR_H_
 
+#include "stdint.h"
 
 #define TC3_PRESCALER		4
 

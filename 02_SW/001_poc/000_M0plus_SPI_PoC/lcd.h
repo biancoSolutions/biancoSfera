@@ -44,5 +44,6 @@ typedef enum
  * @return void
  */
 void LCD_Init( void );
+void Send_Byte(uint8_t data);
 
 

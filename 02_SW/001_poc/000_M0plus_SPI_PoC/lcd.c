@@ -13,7 +13,7 @@
 void LCD_Init(void)
 {
 
-	SPI_init();
+	SPI_Init();
 	TMR_Init();
 	GPIO_Init();
 	GPIO_RS_LOW();
@@ -29,7 +29,7 @@ void LCD_Init(void)
 
 void Write_Something(void)
 {
-	SPI_init();
+	SPI_Init();
 	TMR_Init();
 	GPIO_Init();
 
@@ -70,5 +70,5 @@ void Send_Byte(uint8_t data)
 		
 	}
 	
-	spiSend(data);
+	SPI_Send(data);
 }

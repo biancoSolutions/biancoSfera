@@ -20,15 +20,32 @@
  */ 
 
 #include "sam.h"
-#include "lcd.h"
+#include "gpio.h"
+#include "spi_master.h"
+#include "rfm69.h"
+#include "rfm69_registers.h"
+#include "tmr.h"
 
 int main(void)
 {
-	/* Initialize the SAM system */
+	/* Initialize the system */
     SystemInit();
+	SPI_Init();
+	TMR_Init();
+	GPIO_Init();
+	RFM69_Init(0xAA, 0xAA);
 	
-	/* Initialize the LCD Display*/
-	//LCD_Init();
+	// Listen for LoRa Messages
+	RFM69_Receiver_Mode();
 	
-	Write_Something();
+	
+	while (1)
+	{
+		uint8_t listen_content[UINT8_MAX];
+		uint8_t listen_content_size;
+		
+		RFM69_Listen(listen_content, &listen_content_size);
+	}
+	
+	
 }

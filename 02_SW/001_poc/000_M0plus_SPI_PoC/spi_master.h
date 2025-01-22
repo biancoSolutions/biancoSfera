@@ -31,5 +31,5 @@
 #define SPI_CLK_FREQ				6000000
 #define SPI_BAUD					50000			
 
-void SPI_init(void);
-uint8_t spiSend(uint8_t data);
+void SPI_Init(void);
+uint32_t SPI_Send(uint8_t data);
